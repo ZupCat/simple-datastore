@@ -52,6 +52,17 @@ public abstract class RedisEntity extends PersistentObject implements Serializab
     public StringProperty OBJECT_TYPE;
 
 
+    protected RedisEntity(final RedisEntity template) {
+        isPersisted(template.isPersisted());
+
+        propertiesMetadata.putAll(template.propertiesMetadata);
+        entityName = template.entityName;
+        secondsToExpire = template.secondsToExpire;
+        usesAppIdPrefix = template.usesAppIdPrefix;
+
+        dataObject.mergeWith(template.dataObject);
+    }
+
     protected RedisEntity(final boolean usesAppIdPrefix, final int secondsToExpire) {
         entityName = getEntityName(this.getClass());
 
