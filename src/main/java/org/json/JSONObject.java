@@ -831,11 +831,15 @@ public class JSONObject {
      * @return An object which is the value.
      */
     public int optInt(String key, int defaultValue) {
-        try {
-            return this.getInt(key);
-        } catch (Exception e) {
-            return defaultValue;
-        }
+        final Object r = opt(key);
+
+        return r == null ? defaultValue : (int) r;
+
+//        try {
+//            return this.getInt(key);
+//        } catch (Exception e) {
+//            return defaultValue;
+//        }
     }
 
     /**
