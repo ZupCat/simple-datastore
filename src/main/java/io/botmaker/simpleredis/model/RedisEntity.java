@@ -108,7 +108,7 @@ public abstract class RedisEntity extends PersistentObject implements Serializab
     }
 
     public static String createNewId() {
-        return RandomUtils.getInstance().getRandomSafeAlphaNumberString(20);
+        return RandomUtils.getInstance().getRandomSafeAlphaNumberStringUnsecured(20);
     }
 
     public double getSortingScore() {

@@ -15,11 +15,13 @@ public final class RandomUtils {
     private static final Object INIT_LOCK_OBJECT = new Object();
     private static RandomUtils instance;
     private final SecureRandom random;
+    private final Random unsecuredRandom;
     //private Boolean randomBoolean;
 
 
     private RandomUtils() {
         this.random = new SecureRandom();
+        this.unsecuredRandom = new Random();
     }
 
     public static RandomUtils getInstance() {
@@ -46,6 +48,15 @@ public final class RandomUtils {
 
         while (_buffer.length() < size) {
             _buffer.append(safeString[random.nextInt(safeString.length - 1)]);
+        }
+        return _buffer.toString();
+    }
+
+    private String getRandomVaryingSymbolsUnsecured(final int size, final char[] safeString) {
+        final StringBuilder _buffer = new StringBuilder(size);
+
+        while (_buffer.length() < size) {
+            _buffer.append(safeString[unsecuredRandom.nextInt(safeString.length - 1)]);
         }
         return _buffer.toString();
     }
@@ -99,6 +110,10 @@ public final class RandomUtils {
 
     public String getRandomSafeAlphaNumberString(final int size) {
         return getRandomVaryingSymbols(size, SAFE_ALPHANUMBERS);
+    }
+
+    public String getRandomSafeAlphaNumberStringUnsecured(final int size) {
+        return getRandomVaryingSymbolsUnsecured(size, SAFE_ALPHANUMBERS);
     }
 
     public String getRandomSafeAlphaCaseNumberString(final int size) {
