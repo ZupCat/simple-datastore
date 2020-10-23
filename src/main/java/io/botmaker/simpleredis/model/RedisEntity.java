@@ -243,7 +243,9 @@ public abstract class RedisEntity extends PersistentObject implements Serializab
 
         final Object r = getDataObject().opt(WithIdDataObject.ID_KEY);
 
-        return r == null ? null : r.toString();
+        final String result = r == null ? null : r.toString();
+        tempId = result;
+        return result;
     }
 
     @Override

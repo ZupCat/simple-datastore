@@ -16,12 +16,14 @@ public final class IntegerProperty extends PropertyMeta<Integer> implements Seri
     }
 
     protected Integer getValueImpl(final DataObject dataObject) {
+        return (Integer) dataObject.opt(name);
+
         // NOTE using same implementation that opt method (with try/catch)
-        try {
-            return dataObject.getInt(name);
-        } catch (Exception e) {
-            return null;
-        }
+//        try {
+//            return dataObject.getInt(name);
+//        } catch (Exception e) {
+//            return null;
+//        }
     }
 
     protected void setValueImpl(final Integer value, final DataObject dataObject) {
