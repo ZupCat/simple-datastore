@@ -16,7 +16,8 @@ public final class IntegerProperty extends PropertyMeta<Integer> implements Seri
     }
 
     protected Integer getValueImpl(final DataObject dataObject) {
-        return (Integer) dataObject.opt(name);
+        final Object r = dataObject.opt(name);
+        return r == null ? null : ((Number) r).intValue();
 
         // NOTE using same implementation that opt method (with try/catch)
 //        try {
