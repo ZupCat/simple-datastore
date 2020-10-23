@@ -30,14 +30,7 @@ import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -777,11 +770,14 @@ public class JSONObject {
      * @return The truth.
      */
     public boolean optBoolean(String key, boolean defaultValue) {
-        try {
-            return this.getBoolean(key);
-        } catch (Exception e) {
-            return defaultValue;
-        }
+        final Object r = opt(key);
+
+        return r == null ? defaultValue : (boolean) r;
+//        try {
+//            return this.getBoolean(key);
+//        } catch (Exception e) {
+//            return defaultValue;
+//        }
     }
 
     /**

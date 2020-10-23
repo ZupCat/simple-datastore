@@ -16,12 +16,13 @@ public final class BooleanProperty extends PropertyMeta<Boolean> implements Seri
     }
 
     protected Boolean getValueImpl(final DataObject dataObject) {
+        return (Boolean) dataObject.opt(name);
         // NOTE using same implementation that opt method (with try/catch)
-        try {
-            return dataObject.getBoolean(name);
-        } catch (Exception e) {
-            return null;
-        }
+//        try {
+//            return dataObject.getBoolean(name);
+//        } catch (Exception e) {
+//            return null;
+//        }
     }
 
     @Override

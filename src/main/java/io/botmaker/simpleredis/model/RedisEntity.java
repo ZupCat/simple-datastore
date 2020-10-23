@@ -43,6 +43,7 @@ public abstract class RedisEntity extends PersistentObject implements Serializab
     private final String entityName;
     private final int secondsToExpire; // 0 means never
     private final boolean usesAppIdPrefix;
+    private String tempId;
     // entity usefull properties
 
     //    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -237,12 +238,18 @@ public abstract class RedisEntity extends PersistentObject implements Serializab
 
     @Override
     public String getId() {
-        return getDataObject().optString(WithIdDataObject.ID_KEY, null);
+        if (tempId != null)
+            return tempId;
+
+        final Object r = getDataObject().opt(WithIdDataObject.ID_KEY);
+
+        return r == null ? null : r.toString();
     }
 
     @Override
     public void setId(final String id) {
         getDataObject().put(WithIdDataObject.ID_KEY, id);
+        tempId = id;
     }
 
     public Map<String, PropertyMeta> getPropertiesMetadata() {
