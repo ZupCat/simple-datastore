@@ -19,7 +19,9 @@ import java.util.Objects;
  */
 public class DataObject extends JSONObject implements Serializable {
 
+    private static final Object LOCK_OBJECT = new Object();
     private static final long serialVersionUID = 471847964351314234L;
+    private static Field _mapField;
 //    private static final String LIST_KEY = "_list_";
 
     private static final ObjectMapper mapper = new ObjectMapper(new JsonFactory())
@@ -63,14 +65,29 @@ public class DataObject extends JSONObject implements Serializable {
 
     public Map getInternalMap() {
         try {
-            final Field field = JSONObject.class.getDeclaredField("map");
-
-            field.setAccessible(true);
-
-            return (Map) field.get(this);
+            return (Map) getInternapMapField().get(this);
         } catch (final Exception _exception) {
             throw new RuntimeException("Problems when getting JSON internal map: " + _exception.getMessage(), _exception);
         }
+    }
+
+    private static Field getInternapMapField() {
+        if (_mapField == null) {
+            synchronized (LOCK_OBJECT) {
+                if (_mapField == null) {
+                    try {
+                        final Field field = JSONObject.class.getDeclaredField("map");
+                        field.setAccessible(true);
+
+                        _mapField = field;
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return _mapField;
     }
 
 //    public void addChild(final DataObject item) {
