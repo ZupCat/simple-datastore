@@ -20,8 +20,10 @@ import java.util.Objects;
 public class DataObject extends JSONObject implements Serializable {
 
     private static final Object LOCK_OBJECT = new Object();
+    private static final Object LOCK_OBJECT_ARRAY = new Object();
     private static final long serialVersionUID = 471847964351314234L;
     private static Field _mapField;
+    private static Field _arrayField;
 //    private static final String LIST_KEY = "_list_";
 
     private static final ObjectMapper mapper = new ObjectMapper(new JsonFactory())
@@ -39,6 +41,10 @@ public class DataObject extends JSONObject implements Serializable {
         super(map);
     }
 
+    public DataObject(final Map map, final boolean threadSafe) {
+        super(map, threadSafe);
+    }
+
     public DataObject(final JSONObject json) {
         this.mergeWith(json);
     }
@@ -49,11 +55,7 @@ public class DataObject extends JSONObject implements Serializable {
 
     public static List getInternalListFromJSONArray(final JSONArray jsonArray) {
         try {
-            final Field arrayField = jsonArray.getClass().getDeclaredField("myArrayList");
-
-            arrayField.setAccessible(true);
-
-            return (List) arrayField.get(jsonArray);
+            return (List) getInternapArrayField().get(jsonArray);
         } catch (final Exception _exception) {
             throw new RuntimeException("Problems when getting JSONArray internal array field using reflection for array [" + jsonArray + ": " + _exception.getMessage(), _exception);
         }
@@ -88,6 +90,27 @@ public class DataObject extends JSONObject implements Serializable {
             }
         }
         return _mapField;
+    }
+
+    private static Field getInternapArrayField() {
+        if (_arrayField == null) {
+            synchronized (LOCK_OBJECT_ARRAY) {
+                if (_arrayField == null) {
+                    try {
+                        final Field arrayField = JSONArray.class.getDeclaredField("myArrayList");
+
+                        arrayField.setAccessible(true);
+
+                        _arrayField = arrayField;
+
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return _arrayField;
     }
 
 //    public void addChild(final DataObject item) {

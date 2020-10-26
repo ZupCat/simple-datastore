@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.botmaker.simpleredis.audit.AuditHandlerServiceFactory;
 import io.botmaker.simpleredis.model.DataObject;
 import io.botmaker.simpleredis.model.RedisEntity;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -117,6 +116,6 @@ public abstract class PropertyMeta<E> implements Serializable {
 
     @Override
     public String toString() {
-        return "[" + StringUtils.replace(getClass().getName(), "io.botmaker.simpleredis.property.", "") + "|" + name + "->" + get() + "]";
+        return name + ":" + get();
     }
 }

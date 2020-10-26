@@ -227,9 +227,13 @@ public class JSONObject {
      *            the JSONObject.
      * @throws JSONException
      */
-    public JSONObject(Map map) {
+    public JSONObject(final Map map) {
+        this(map, true);
+    }
+
+    public JSONObject(final Map map, final boolean threadSafe) {
 //        this.map = new HashMap();
-        this.map = new ConcurrentHashMap();
+        this.map = threadSafe ? new ConcurrentHashMap() : new HashMap();
         if (map != null) {
             Iterator i = map.entrySet().iterator();
             while (i.hasNext()) {

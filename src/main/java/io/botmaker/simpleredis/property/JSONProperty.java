@@ -14,6 +14,8 @@ import java.util.Set;
 public final class JSONProperty extends PropertyMeta<Map<String, Object>> implements Serializable {
 
     private static final long serialVersionUID = 6181606486836703324L;
+    private static final Object LOCK_OBJECT_ARRAY = new Object();
+    private static Field _arrayField;
 //    private static final JsonFactory jsonFactory = new JsonFactory();
 //    private static final ObjectMapper mapper = new ObjectMapper(jsonFactory);
 
@@ -89,14 +91,31 @@ public final class JSONProperty extends PropertyMeta<Map<String, Object>> implem
 
     private Map<String, Object> getInternalMapFromJSONObject(final JSONObject jsonObject) {
         try {
-            final Field arrayField = jsonObject.getClass().getDeclaredField("map");
-
-            arrayField.setAccessible(true);
-
-            return (Map<String, Object>) arrayField.get(jsonObject);
+            return (Map<String, Object>) getInternapArrayField().get(jsonObject);
         } catch (final Exception _exception) {
             throw new RuntimeException("Problems when getting JSONObject internal map field using reflection for array [" + jsonObject + ": " + _exception.getMessage(), _exception);
         }
+    }
+
+    private static Field getInternapArrayField() {
+        if (_arrayField == null) {
+            synchronized (LOCK_OBJECT_ARRAY) {
+                if (_arrayField == null) {
+                    try {
+                        final Field arrayField = JSONObject.class.getDeclaredField("map");
+
+                        arrayField.setAccessible(true);
+
+                        _arrayField = arrayField;
+
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return _arrayField;
     }
 
     // Reading operations

@@ -16,6 +16,8 @@ public final class MapProperty<V> extends PropertyMeta<Map<String, V>> implement
 
     private static final long serialVersionUID = 6181606486836703354L;
 
+    private static final Object LOCK_OBJECT_ARRAY = new Object();
+    private static Field _arrayField;
     private final Class<? extends DataObject> valueClass;
 
     public MapProperty(final RedisEntity owner, final Class<? extends DataObject> _valueClass) {
@@ -102,16 +104,32 @@ public final class MapProperty<V> extends PropertyMeta<Map<String, V>> implement
 
     private Map<String, V> getInternalMapFromJSONObject(final JSONObject jsonObject) {
         try {
-            final Field arrayField = jsonObject.getClass().getDeclaredField("map");
-
-            arrayField.setAccessible(true);
-
-            return (Map<String, V>) arrayField.get(jsonObject);
+            return (Map<String, V>) getInternapArrayField().get(jsonObject);
         } catch (final Exception _exception) {
             throw new RuntimeException("Problems when getting JSONObject internal map field using reflection for array [" + jsonObject + ": " + _exception.getMessage(), _exception);
         }
     }
 
+    private static Field getInternapArrayField() {
+        if (_arrayField == null) {
+            synchronized (LOCK_OBJECT_ARRAY) {
+                if (_arrayField == null) {
+                    try {
+                        final Field arrayField = JSONObject.class.getDeclaredField("map");
+
+                        arrayField.setAccessible(true);
+
+                        _arrayField = arrayField;
+
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return _arrayField;
+    }
 
     // Reading operations
     public int size() {
