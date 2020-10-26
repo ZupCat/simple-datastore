@@ -770,14 +770,14 @@ public class JSONObject {
      * @return The truth.
      */
     public boolean optBoolean(String key, boolean defaultValue) {
-        final Object r = opt(key);
+        try {
+            final Object r = opt(key);
 
-        return r == null ? defaultValue : (boolean) r;
-//        try {
-//            return this.getBoolean(key);
-//        } catch (Exception e) {
-//            return defaultValue;
-//        }
+            return r == null ? defaultValue : (boolean) r;
+
+        } catch (final ClassCastException e) {
+            return defaultValue;
+        }
     }
 
     /**
@@ -831,15 +831,14 @@ public class JSONObject {
      * @return An object which is the value.
      */
     public int optInt(String key, int defaultValue) {
-        final Object r = opt(key);
+        try {
+            final Object r = opt(key);
 
-        return r == null ? defaultValue : (int) r;
+            return r == null ? defaultValue : ((Number) r).intValue();
 
-//        try {
-//            return this.getInt(key);
-//        } catch (Exception e) {
-//            return defaultValue;
-//        }
+        } catch (final ClassCastException e) {
+            return defaultValue;
+        }
     }
 
     /**
@@ -889,8 +888,10 @@ public class JSONObject {
      */
     public long optLong(String key, long defaultValue) {
         try {
-            return this.getLong(key);
-        } catch (Exception e) {
+            final Object r = opt(key);
+
+            return r == null ? defaultValue : ((Number) r).longValue();
+        } catch (final ClassCastException e) {
             return defaultValue;
         }
     }
