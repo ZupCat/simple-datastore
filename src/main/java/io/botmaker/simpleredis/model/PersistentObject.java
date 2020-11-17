@@ -19,6 +19,10 @@ public abstract class PersistentObject implements Serializable {
 
     public abstract void setModified();
 
+    public void resetRedisAttributes() {
+        // nothing to do
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
